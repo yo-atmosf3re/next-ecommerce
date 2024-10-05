@@ -10,15 +10,17 @@ datasource db {
     // ? Тип базы данных;
     provider  = "postgresql"
     // ? Куда делать подключение;
-    url       = env("POSTGRES_URL") // uses connection pooling
-    directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+    url       = env("POSTGRES_URL")
+    directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
+/// Модель пользователя;
 model User {
     // ? Указываем, что айди это число и уникальный идентификатор (@id) и по умолчанию автоматически айди будет +1 @default(autoincrement());
     id Int @id @default(autoincrement())
 
     fullName String
+    // ? Делаем так, чтобы имейл был уникальным, иначе будет возвращаться 500ая ошибка;
     email    String @unique
     password String
 
@@ -28,11 +30,48 @@ model User {
     updatedAt DateTime @updatedAt
 }
 
+/// Модель уникальной категории товаров - пицца, комбо, закуски и так далее;
+model Category {
+    id       Int       @id @default(autoincrement())
+    // ? Название категории должно быть уникальным;
+    name     String    @unique
+    // ? Указываем множественную связь категорий с продуктами;
+    products Product[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+/// Модель продукта;
 model Product {
     id Int @id @default(autoincrement())
 
     name     String
     imageUrl String
+
+    // ? @relation - декоратор для создания и управления связями между моделями в базе данных;
+    
+    ingredients Ingredient[]
+
+    // ? Указываем связь продукта с категорией. Связывыем categoryId продукта и id категории, и если они совпадают, то это будет значить, что продукт будет относиться именно к этой категории (one-to-many);
+    category   Category @relation(fields: [categoryId], references: [id])
+    categoryId Int
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+}
+
+/// Модель ингредиента;
+model Ingredient {
+    id Int @id @default(autoincrement())
+
+    name     String
+    price    Int
+    imageUrl String
+
+    // ? Для установки связи many-to-many нужно указывать отношение между двумя моделями;
+    products  Product[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
