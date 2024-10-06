@@ -21,8 +21,18 @@ model User {
 
     fullName String
     // ? Делаем так, чтобы имейл был уникальным, иначе будет возвращаться 500ая ошибка;
-    email    String @unique
+    email    String   @unique
     password String
+    role     UserRole @default(USER)
+
+    // ? В provider указывается какая социальная сеть привязана к юзеру. Данное поле создаётся в том случае, если пользователь регистрируется через социальную сеть, а если пользователь регистрируется через логин-пароль, то не создаётся;
+    provider   String?
+    providerId String?
+
+    cart             Cart?
+    // ? У пользователя может быть множество заказов;
+    orders           Order[]
+    verificationCode VerificationCode?
 
     // ? Указываем время создания пользователя по дефолту - прямо сейчас;
     createdAt DateTime @default(now())
@@ -50,8 +60,10 @@ model Product {
     imageUrl String
 
     // ? @relation - декоратор для создания и управления связями между моделями в базе данных;
-    
+
     ingredients Ingredient[]
+    // ? У продукта может быть множество вариаций, а вот у вариации может быть только один продукт;
+    items       ProductItem[]
 
     // ? Указываем связь продукта с категорией. Связывыем categoryId продукта и id категории, и если они совпадают, то это будет значить, что продукт будет относиться именно к этой категории (one-to-many);
     category   Category @relation(fields: [categoryId], references: [id])
@@ -59,7 +71,22 @@ model Product {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+}
 
+/// Модель вариации продукта;
+model ProductItem {
+    id Int @id @default(autoincrement())
+
+    price     Int
+    // ? Знак вопроса после типа означает, что свойство может отсутствовать в модели;
+    size      Int?
+    pizzaType Int?
+
+    cartItems CartItem[]
+
+    // ? У вариации продукта может быть только один продукт;
+    product   Product @relation(fields: [productId], references: [id])
+    productId Int
 }
 
 /// Модель ингредиента;
@@ -72,7 +99,101 @@ model Ingredient {
 
     // ? Для установки связи many-to-many нужно указывать отношение между двумя моделями;
     products  Product[]
+    cartItems CartItem[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+}
+
+/// Модель корзины;
+model Cart {
+    id Int @id @default(autoincrement())
+
+    // ? У одной корзины может быть только один пользователь, что логично;
+    user   User? @relation(fields: [userId], references: [id])
+    // ? Плюсом ко всему, пользоваться корзиной можно будет и без регистрации;
+    userId Int?  @unique
+
+    items CartItem[]
+
+    // ? Для привязки корзины к незарегистрированному пользователю используем токен, хотя токен будет генерироваться в любом случае;
+    token String
+
+    // ? Итоговая цена в корзине;
+    totalAmount Int @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+/// Модель товара в корзине;
+model CartItem {
+    id Int @id @default(autoincrement())
+
+    cart   Cart @relation(fields: [cartId], references: [id])
+    cartId Int
+
+    productItem   ProductItem @relation(fields: [productItemId], references: [id])
+    productItemId Int
+
+    // ? Количество товаров;
+    quantity Int @default(1)
+
+    // ? Возможность добавлять дополнительные ингредиенты для товара в корзине;
+    ingredients Ingredient[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+/// Модель заказа;
+model Order {
+    id Int @id @default(autoincrement())
+
+    user   User? @relation(fields: [userId], references: [id])
+    userId Int?
+
+    // ? Заказ может создать неавторизованный пользователь по токену, хотя токен создаётся в любом случае;
+    token String
+
+    totalAmount Int
+    status      OrderStatus
+    paymentId   String?
+
+    items Json
+
+    fullName String
+    email    String
+    phone    String
+    address  String
+    comment  String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+/// Модель верификационного кода;
+model VerificationCode {
+    id Int @id @default(autoincrement())
+
+    user   User @relation(fields: [userId], references: [id])
+    userId Int  @unique
+
+    code String
+
+    createdAt DateTime @default(now())
+
+    // ? Данная конструкция делает проверку на групповую уникальность - userId && code - то есть нельзя будет в момент регистрации сделать так, чтобы было два одинаковых верификационных кода - с одинаковыми айди и кодом - для разных пользователей;
+    @@unique([userId, code])
+}
+
+enum OrderStatus {
+    PENDING
+    SUCCEEDED
+    CANCELED
+}
+
+enum UserRole {
+    USER
+    ADMIN
 }
