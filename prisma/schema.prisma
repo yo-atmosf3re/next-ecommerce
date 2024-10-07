@@ -21,9 +21,11 @@ model User {
 
     fullName String
     // ? Делаем так, чтобы имейл был уникальным, иначе будет возвращаться 500ая ошибка;
-    email    String   @unique
+    email    String    @unique
     password String
-    role     UserRole @default(USER)
+    role     UserRole  @default(USER)
+    // ? Информация о том, когда пользователь подтверждён;
+    verified DateTime?
 
     // ? В provider указывается какая социальная сеть привязана к юзеру. Данное поле создаётся в том случае, если пользователь регистрируется через социальную сеть, а если пользователь регистрируется через логин-пароль, то не создаётся;
     provider   String?
