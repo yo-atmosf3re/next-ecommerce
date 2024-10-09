@@ -42,7 +42,7 @@ export default function Home() {
                                         ],
                                     },
                                     {
-                                        id: 1,
+                                        id: 2,
                                         name: 'Чизбургер-пицца',
                                         imageUrl:
                                             'https://media.dodostatic.net/image/r:292x292/11EEFB595A197C24BA932A0AD1144AFB.avif',
@@ -54,7 +54,7 @@ export default function Home() {
                                         ],
                                     },
                                     {
-                                        id: 1,
+                                        id: 3,
                                         name: 'Чизбургер-пицца',
                                         imageUrl:
                                             'https://media.dodostatic.net/image/r:292x292/11EEFB595A197C24BA932A0AD1144AFB.avif',
@@ -66,7 +66,7 @@ export default function Home() {
                                         ],
                                     },
                                     {
-                                        id: 1,
+                                        id: 4,
                                         name: 'Чизбургер-пицца',
                                         imageUrl:
                                             'https://media.dodostatic.net/image/r:292x292/11EEFB595A197C24BA932A0AD1144AFB.avif',
@@ -78,7 +78,7 @@ export default function Home() {
                                         ],
                                     },
                                     {
-                                        id: 1,
+                                        id: 5,
                                         name: 'Чизбургер-пицца',
                                         imageUrl:
                                             'https://media.dodostatic.net/image/r:292x292/11EEFB595A197C24BA932A0AD1144AFB.avif',
@@ -90,7 +90,7 @@ export default function Home() {
                                         ],
                                     },
                                     {
-                                        id: 1,
+                                        id: 6,
                                         name: 'Чизбургер-пицца',
                                         imageUrl:
                                             'https://media.dodostatic.net/image/r:292x292/11EEFB595A197C24BA932A0AD1144AFB.avif',
@@ -102,7 +102,7 @@ export default function Home() {
                                         ],
                                     },
                                     {
-                                        id: 1,
+                                        id: 7,
                                         name: 'Чизбургер-пицца',
                                         imageUrl:
                                             'https://media.dodostatic.net/image/r:292x292/11EEFB595A197C24BA932A0AD1144AFB.avif',
@@ -114,7 +114,7 @@ export default function Home() {
                                         ],
                                     },
                                     {
-                                        id: 1,
+                                        id: 8,
                                         name: 'Чизбургер-пицца',
                                         imageUrl:
                                             'https://media.dodostatic.net/image/r:292x292/11EEFB595A197C24BA932A0AD1144AFB.avif',
@@ -126,7 +126,7 @@ export default function Home() {
                                         ],
                                     },
                                     {
-                                        id: 1,
+                                        id: 9,
                                         name: 'Чизбургер-пицца',
                                         imageUrl:
                                             'https://media.dodostatic.net/image/r:292x292/11EEFB595A197C24BA932A0AD1144AFB.avif',
