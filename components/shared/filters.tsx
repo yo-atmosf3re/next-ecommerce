@@ -1,46 +1,25 @@
+'use client';
+
 import React from 'react';
 import { Title } from './title';
 import { FilterCheckbox } from './filter-checkbox';
 import { Input } from '../ui';
 import { RangeSlider } from './range-slider';
 import { CheckboxFiltersGroup } from './checkbox-filters-group';
+import { useFilterIngredients } from '@/hooks/useFilterIngredients';
 
 interface FiltersPropsI {
     className?: string;
 }
 
-const INGREDIENTS = [
-    {
-        text: 'Сырный соус',
-        value: '1',
-    },
-    {
-        text: 'Моццарелла',
-        value: '2',
-    },
-    {
-        text: 'Чеснок',
-        value: '3',
-    },
-    {
-        text: 'Солёные огурчики',
-        value: '4',
-    },
-    {
-        text: 'Красный лук',
-        value: '5',
-    },
-    {
-        text: 'Томаты',
-        value: '6',
-    },
-    {
-        text: 'Болгарский перчик',
-        value: '7',
-    },
-];
-
 export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
+    const { ingredients, loading } = useFilterIngredients();
+
+    const items = ingredients.map((ingredient) => ({
+        value: String(ingredient.id),
+        text: ingredient.name,
+    }));
+
     return (
         <div className={className}>
             <Title
@@ -87,8 +66,9 @@ export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
                     title="Ингредиенты"
                     className="mt-5"
                     limit={6}
-                    defaultItems={INGREDIENTS}
-                    items={INGREDIENTS}
+                    defaultItems={items.slice(0, 6)}
+                    items={items}
+                    loading={loading}
                 />
             </div>
         </div>
