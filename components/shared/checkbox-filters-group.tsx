@@ -15,7 +15,9 @@ interface CheckboxFiltersGroupPropsI {
     searchInputPlaceholder?: string;
     onClickCheckbox?: (id: string) => void;
     defaultValue?: string[];
+    selected?: Set<string>;
     className?: string;
+    name?: string;
 }
 
 export const CheckboxFiltersGroup: React.FC<CheckboxFiltersGroupPropsI> = ({
@@ -26,7 +28,9 @@ export const CheckboxFiltersGroup: React.FC<CheckboxFiltersGroupPropsI> = ({
     limit = 5,
     onClickCheckbox,
     searchInputPlaceholder = 'Поиск...',
+    selected,
     loading,
+    name,
 }) => {
     const [showAll, setShowAll] = React.useState(false);
     const [searchValue, setSearchValue] = React.useState('');
@@ -77,8 +81,11 @@ export const CheckboxFiltersGroup: React.FC<CheckboxFiltersGroupPropsI> = ({
                         text={item.text}
                         value={item.value}
                         endAdornment={item.endAdornment}
-                        checked={false}
+                        // ? Простейшая проверка на соответствие айдишников - если в выбранных такой айдишник есть - то есть если айдишник чекбокса равен айдишнику выбранному, то чекбокс перекрашивается;
+                        checked={selected?.has(item.value)}
+                        // ? Если что, то item.value это и есть айдишник чекбокса;
                         onCheckedChange={() => onClickCheckbox?.(item.value)}
+                        name={name}
                     />
                 ))}
             </div>
