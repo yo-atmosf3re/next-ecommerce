@@ -13,7 +13,8 @@ interface FiltersPropsI {
 }
 
 export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
-    const { ingredients, loading } = useFilterIngredients();
+    const { ingredients, loading, onAddId, selectedIds } =
+        useFilterIngredients();
 
     const items = ingredients.map((ingredient) => ({
         value: String(ingredient.id),
@@ -64,11 +65,14 @@ export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
                 </div>
                 <CheckboxFiltersGroup
                     title="Ингредиенты"
+                    name="ingredients"
                     className="mt-5"
                     limit={6}
                     defaultItems={items.slice(0, 6)}
                     items={items}
                     loading={loading}
+                    onClickCheckbox={onAddId}
+                    selected={selectedIds}
                 />
             </div>
         </div>
