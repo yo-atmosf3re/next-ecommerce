@@ -12,14 +12,30 @@ interface FiltersPropsI {
     className?: string;
 }
 
+interface PriceI {
+    priceFrom: number;
+    priceTo: number;
+}
+
 export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
     const { ingredients, loading, onAddId, selectedIds } =
         useFilterIngredients();
+    const [price, setPrice] = React.useState<PriceI>({
+        priceFrom: 0,
+        priceTo: 1000,
+    });
 
     const items = ingredients.map((ingredient) => ({
         value: String(ingredient.id),
         text: ingredient.name,
     }));
+
+    const updatePrice = (name: keyof PriceI, value: number) => {
+        setPrice({
+            ...price,
+            [name]: value,
+        });
+    };
 
     return (
         <div className={className}>
@@ -47,20 +63,30 @@ export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
                             placeholder="0"
                             min={0}
                             max={1000}
-                            defaultValue={0}
+                            value={String(price.priceFrom)}
+                            onChange={(e) =>
+                                updatePrice('priceFrom', Number(e.target.value))
+                            }
                         />
                         <Input
                             type="number"
                             min={100}
                             max={1000}
                             placeholder="1000"
+                            value={String(price.priceTo)}
+                            onChange={(e) =>
+                                updatePrice('priceTo', Number(e.target.value))
+                            }
                         />
                     </div>
                     <RangeSlider
                         min={0}
-                        max={5000}
+                        max={1000}
                         step={10}
-                        value={[0, 5000]}
+                        value={[price.priceFrom, price.priceTo]}
+                        onValueChange={([priceFrom, priceTo]) =>
+                            setPrice({ priceFrom, priceTo })
+                        }
                     />
                 </div>
                 <CheckboxFiltersGroup
