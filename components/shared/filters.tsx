@@ -2,20 +2,21 @@
 
 import React from 'react';
 import { Title } from './title';
-import { FilterCheckbox } from './filter-checkbox';
 import { Input } from '../ui';
 import { RangeSlider } from './range-slider';
 import { CheckboxFiltersGroup } from './checkbox-filters-group';
 import { useFilterIngredients } from '@/hooks/useFilterIngredients';
 import { useSet } from 'react-use';
+import qs from 'qs';
+import { useRouter } from 'next/navigation';
 
 interface FiltersPropsI {
     className?: string;
 }
 
 interface PriceI {
-    priceFrom: number;
-    priceTo: number;
+    priceFrom?: number;
+    priceTo?: number;
 }
 
 export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
@@ -26,11 +27,9 @@ export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
     const [pizzaTypes, { toggle: togglePizzaTypes }] = useSet(
         new Set<string>([]),
     );
+    const router = useRouter();
 
-    const [price, setPrice] = React.useState<PriceI>({
-        priceFrom: 0,
-        priceTo: 1000,
-    });
+    const [price, setPrice] = React.useState<PriceI>({});
 
     const items = ingredients.map((ingredient) => ({
         value: String(ingredient.id),
@@ -45,13 +44,19 @@ export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
     };
 
     React.useEffect(() => {
-        console.log({
-            sizes,
-            pizzaTypes,
-            price,
-            selectedIngredients,
+        const filters = {
+            ...price,
+            pizzaTypes: Array.from(pizzaTypes),
+            sizes: Array.from(sizes),
+            ingredients: Array.from(selectedIngredients),
+        };
+
+        const query = qs.stringify(filters, {
+            arrayFormat: 'comma',
         });
-    }, [sizes, pizzaTypes, price,  selectedIngredients]);
+
+        router.push(`?${query}`);
+    }, [sizes, pizzaTypes, price, selectedIngredients, router]);
 
     return (
         <div className={className}>
@@ -114,7 +119,7 @@ export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
                         min={0}
                         max={1000}
                         step={10}
-                        value={[price.priceFrom, price.priceTo]}
+                        value={[price.priceFrom || 0, price.priceTo || 1000]}
                         onValueChange={([priceFrom, priceTo]) =>
                             setPrice({ priceFrom, priceTo })
                         }
