@@ -7,19 +7,51 @@ import { Input } from '../ui';
 import { RangeSlider } from './range-slider';
 import { CheckboxFiltersGroup } from './checkbox-filters-group';
 import { useFilterIngredients } from '@/hooks/useFilterIngredients';
+import { useSet } from 'react-use';
 
 interface FiltersPropsI {
     className?: string;
 }
 
+interface PriceI {
+    priceFrom: number;
+    priceTo: number;
+}
+
 export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
-    const { ingredients, loading, onAddId, selectedIds } =
+    const { ingredients, loading, onAddId, selectedIngredients } =
         useFilterIngredients();
+
+    const [sizes, { toggle: toggleSize }] = useSet(new Set<string>([]));
+    const [pizzaTypes, { toggle: togglePizzaTypes }] = useSet(
+        new Set<string>([]),
+    );
+
+    const [price, setPrice] = React.useState<PriceI>({
+        priceFrom: 0,
+        priceTo: 1000,
+    });
 
     const items = ingredients.map((ingredient) => ({
         value: String(ingredient.id),
         text: ingredient.name,
     }));
+
+    const updatePrice = (name: keyof PriceI, value: number) => {
+        setPrice({
+            ...price,
+            [name]: value,
+        });
+    };
+
+    React.useEffect(() => {
+        console.log({
+            sizes,
+            pizzaTypes,
+            price,
+            selectedIngredients,
+        });
+    }, [sizes, pizzaTypes, price,  selectedIngredients]);
 
     return (
         <div className={className}>
@@ -30,13 +62,28 @@ export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
             />
             <div className="flex flex-col gap-4">
                 {/* // ? Верхние чекбоксы; */}
-                <FilterCheckbox
-                    text="Можно собирать"
-                    value="1"
+                <CheckboxFiltersGroup
+                    title="Тип теста"
+                    name="pizzaTypes"
+                    className="mb-5"
+                    onClickCheckbox={togglePizzaTypes}
+                    selected={pizzaTypes}
+                    items={[
+                        { text: 'Тонкое', value: '1' },
+                        { text: 'Традиционное', value: '2' },
+                    ]}
                 />
-                <FilterCheckbox
-                    text="Новинки"
-                    value="2"
+                <CheckboxFiltersGroup
+                    title="Размеры"
+                    name="sizes"
+                    className="mb-5"
+                    onClickCheckbox={toggleSize}
+                    selected={sizes}
+                    items={[
+                        { text: '20 см', value: '20' },
+                        { text: '30 см', value: '30' },
+                        { text: '40 см', value: '40' },
+                    ]}
                 />
                 {/* // ? Фильтры цены; */}
                 <div className="mt-5 border-y border-y-neutral-100 py-6 pb-7">
@@ -47,20 +94,30 @@ export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
                             placeholder="0"
                             min={0}
                             max={1000}
-                            defaultValue={0}
+                            value={String(price.priceFrom)}
+                            onChange={(e) =>
+                                updatePrice('priceFrom', Number(e.target.value))
+                            }
                         />
                         <Input
                             type="number"
                             min={100}
                             max={1000}
                             placeholder="1000"
+                            value={String(price.priceTo)}
+                            onChange={(e) =>
+                                updatePrice('priceTo', Number(e.target.value))
+                            }
                         />
                     </div>
                     <RangeSlider
                         min={0}
-                        max={5000}
+                        max={1000}
                         step={10}
-                        value={[0, 5000]}
+                        value={[price.priceFrom, price.priceTo]}
+                        onValueChange={([priceFrom, priceTo]) =>
+                            setPrice({ priceFrom, priceTo })
+                        }
                     />
                 </div>
                 <CheckboxFiltersGroup
@@ -72,7 +129,7 @@ export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
                     items={items}
                     loading={loading}
                     onClickCheckbox={onAddId}
-                    selected={selectedIds}
+                    selected={selectedIngredients}
                 />
             </div>
         </div>
