@@ -9,7 +9,7 @@ type ItemType = FilterCheckboxPropsI;
 interface CheckboxFiltersGroupPropsI {
     title: string;
     items: ItemType[];
-    defaultItems: ItemType[];
+    defaultItems?: ItemType[];
     limit?: number;
     loading?: boolean;
     searchInputPlaceholder?: string;

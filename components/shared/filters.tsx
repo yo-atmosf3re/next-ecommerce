@@ -7,6 +7,7 @@ import { Input } from '../ui';
 import { RangeSlider } from './range-slider';
 import { CheckboxFiltersGroup } from './checkbox-filters-group';
 import { useFilterIngredients } from '@/hooks/useFilterIngredients';
+import { useSet } from 'react-use';
 
 interface FiltersPropsI {
     className?: string;
@@ -18,8 +19,14 @@ interface PriceI {
 }
 
 export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
-    const { ingredients, loading, onAddId, selectedIds } =
+    const { ingredients, loading, onAddId, selectedIngredients } =
         useFilterIngredients();
+
+    const [sizes, { toggle: toggleSize }] = useSet(new Set<string>([]));
+    const [pizzaTypes, { toggle: togglePizzaTypes }] = useSet(
+        new Set<string>([]),
+    );
+
     const [price, setPrice] = React.useState<PriceI>({
         priceFrom: 0,
         priceTo: 1000,
@@ -37,6 +44,15 @@ export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
         });
     };
 
+    React.useEffect(() => {
+        console.log({
+            sizes,
+            pizzaTypes,
+            price,
+            selectedIngredients,
+        });
+    }, [sizes, pizzaTypes, price,  selectedIngredients]);
+
     return (
         <div className={className}>
             <Title
@@ -46,13 +62,28 @@ export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
             />
             <div className="flex flex-col gap-4">
                 {/* // ? Верхние чекбоксы; */}
-                <FilterCheckbox
-                    text="Можно собирать"
-                    value="1"
+                <CheckboxFiltersGroup
+                    title="Тип теста"
+                    name="pizzaTypes"
+                    className="mb-5"
+                    onClickCheckbox={togglePizzaTypes}
+                    selected={pizzaTypes}
+                    items={[
+                        { text: 'Тонкое', value: '1' },
+                        { text: 'Традиционное', value: '2' },
+                    ]}
                 />
-                <FilterCheckbox
-                    text="Новинки"
-                    value="2"
+                <CheckboxFiltersGroup
+                    title="Размеры"
+                    name="sizes"
+                    className="mb-5"
+                    onClickCheckbox={toggleSize}
+                    selected={sizes}
+                    items={[
+                        { text: '20 см', value: '20' },
+                        { text: '30 см', value: '30' },
+                        { text: '40 см', value: '40' },
+                    ]}
                 />
                 {/* // ? Фильтры цены; */}
                 <div className="mt-5 border-y border-y-neutral-100 py-6 pb-7">
@@ -98,7 +129,7 @@ export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
                     items={items}
                     loading={loading}
                     onClickCheckbox={onAddId}
-                    selected={selectedIds}
+                    selected={selectedIngredients}
                 />
             </div>
         </div>
