@@ -8,7 +8,7 @@ import { CheckboxFiltersGroup } from './checkbox-filters-group';
 import { useFilterIngredients } from '@/hooks/useFilterIngredients';
 import { useSet } from 'react-use';
 import qs from 'qs';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface FiltersPropsI {
     className?: string;
@@ -19,17 +19,41 @@ interface PriceI {
     priceTo?: number;
 }
 
+interface QueryFilterI extends PriceI {
+    pizzaTypes: string;
+    sizes: string;
+    ingredients: string;
+}
+
 export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
+    const searchParams = useSearchParams() as unknown as Map<
+        keyof QueryFilterI,
+        string
+    >;
+
     const { ingredients, loading, onAddId, selectedIngredients } =
         useFilterIngredients();
 
-    const [sizes, { toggle: toggleSize }] = useSet(new Set<string>([]));
+    const [sizes, { toggle: toggleSize }] = useSet(
+        new Set<string>(
+            searchParams.get('sizes')
+                ? searchParams.get('sizes')?.split(',')
+                : [],
+        ),
+    );
     const [pizzaTypes, { toggle: togglePizzaTypes }] = useSet(
-        new Set<string>([]),
+        new Set<string>(
+            searchParams.get('pizzaTypes')
+                ? searchParams.get('pizzaTypes')?.split(',')
+                : [],
+        ),
     );
     const router = useRouter();
 
-    const [price, setPrice] = React.useState<PriceI>({});
+    const [price, setPrice] = React.useState<PriceI>({
+        priceFrom: Number(searchParams.get('priceFrom')) || undefined,
+        priceTo: Number(searchParams.get('priceTo')) || undefined,
+    });
 
     const items = ingredients.map((ingredient) => ({
         value: String(ingredient.id),
@@ -55,7 +79,9 @@ export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
             arrayFormat: 'comma',
         });
 
-        router.push(`?${query}`);
+        router.push(`?${query}`, {
+            scroll: false,
+        });
     }, [sizes, pizzaTypes, price, selectedIngredients, router]);
 
     return (

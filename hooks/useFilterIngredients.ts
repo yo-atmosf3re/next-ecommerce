@@ -36,5 +36,9 @@ export const useFilterIngredients = (): ReturnProps => {
         fetchIngredients();
     }, []);
 
+    const setSelectedIngredients = (ids: string[]) => {
+        ids.forEach(selectedIngredients.add);
+    };
+
     return { ingredients, loading, onAddId: toggle, selectedIngredients };
 };
