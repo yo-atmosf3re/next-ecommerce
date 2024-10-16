@@ -33,8 +33,6 @@ export const useQueryFilters = (filters: FiltersI) => {
                 // ? Если scroll true, то при навигации прокручивает скролл в начало страницы;
                 scroll: false,
             });
-
-            console.log(filters, 999);
         }
 
         isMounted.current = true;

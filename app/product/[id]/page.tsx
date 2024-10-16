@@ -1,6 +1,6 @@
 import React from 'react';
 
-// * Тестовое отображение продукта;
+// ? Страница с конкретным товаром;
 export default function ProductPage({
     params: { id },
 }: {
