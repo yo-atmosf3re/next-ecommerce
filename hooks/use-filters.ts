@@ -63,6 +63,7 @@ export const useFilters = (): ReturnPropsI => {
     });
 
     const updatePrice = (name: keyof PricePropsI, value: number) => {
+        // ? Для корректной работы стейта работаем с предыдущими значениями;
         setPrices((prev) => ({
             ...prev,
             [name]: value,
