@@ -11,17 +11,9 @@ interface FiltersPropsI {
     className?: string;
 }
 
-interface PriceI {
-    priceFrom?: number;
-    priceTo?: number;
-}
-
-interface QueryFilterI extends PriceI {
-    pizzaTypes: string;
-    sizes: string;
-    ingredients: string;
-}
-
+/**
+ * Компонента, которая отрисовывает боковые фильтры;
+ */
 export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
     const { ingredients, loading } = useIngredients();
     const filters = useFilters();
@@ -34,7 +26,6 @@ export const Filters: React.FC<FiltersPropsI> = ({ className }) => {
     }));
 
     const updatePrices = (prices: number[]) => {
-        console.log(prices, 999);
         filters.setPrices('priceFrom', prices[0]);
         filters.setPrices('priceTo', prices[1]);
     };
