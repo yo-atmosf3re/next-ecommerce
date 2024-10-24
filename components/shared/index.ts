@@ -13,3 +13,4 @@ export { ProductsGroupList } from '@/components/shared/products-group-list';
 export { SearchInput } from '@/components/shared/search-input';
 export { ProductImage } from '@/components/shared/product-image';
 export { GroupVariants } from '@/components/shared/group-variants';
+export * from './modals';
