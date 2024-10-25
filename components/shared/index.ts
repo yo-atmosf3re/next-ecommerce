@@ -11,6 +11,8 @@ export { CheckboxFiltersGroup } from '@/components/shared/checkbox-filters-group
 export { ProductCard } from '@/components/shared/product-card';
 export { ProductsGroupList } from '@/components/shared/products-group-list';
 export { SearchInput } from '@/components/shared/search-input';
-export { ProductImage } from '@/components/shared/product-image';
+export { PizzaImage } from '@/components/shared/pizza-image';
 export { GroupVariants } from '@/components/shared/group-variants';
+export { ChoosePizzaForm } from '@/components/shared/choose-pizza-form';
+export { ChooseProductForm } from '@/components/shared/choose-product-form';
 export * from './modals';

@@ -2,13 +2,15 @@
 
 import { Dialog, DialogContent } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { Product } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import { ChoosePizzaForm } from '../choose-pizza-form';
+import { ProductWithRelations } from '@/@types/product';
+import { ChooseProductForm } from '../choose-product-form';
 
 interface ChooseProductModalPropsI {
     className?: string;
-    product: Product;
+    product: ProductWithRelations;
 }
 
 /**
@@ -19,6 +21,8 @@ export const ChooseProductModal: React.FC<ChooseProductModalPropsI> = ({
     product,
 }) => {
     const router = useRouter();
+    // ? Если у вариации нет типа пиццы, то это значит, что продукт не пицца, потому что в таком случае pizzaType = null;
+    const isPizzaForm = Boolean(product.items[0].pizzaType);
 
     return (
         <Dialog
@@ -32,7 +36,18 @@ export const ChooseProductModal: React.FC<ChooseProductModalPropsI> = ({
                     className,
                 )}
             >
-                {product.name}
+                {isPizzaForm ? (
+                    <ChoosePizzaForm
+                        imageUrl={product.imageUrl}
+                        name={product.name}
+                        ingredients={[]}
+                    />
+                ) : (
+                    <ChooseProductForm
+                        imageUrl={product.imageUrl}
+                        name={product.name}
+                    />
+                )}
             </DialogContent>
         </Dialog>
     );

@@ -1,14 +1,14 @@
 import { cn } from '@/lib/utils';
 import React from 'react';
 
-interface ProductImagePropsI {
+interface PizzaImagePropsI {
     className?: string;
     imageUrl: string;
     size: 20 | 30 | 40;
 }
 
-// ? Компонента, которая отрисовывает картинку продукта;
-export const ProductImage: React.FC<ProductImagePropsI> = ({
+// ? Компонента, которая отрисовывает картинку пиццы;
+export const PizzaImage: React.FC<PizzaImagePropsI> = ({
     className,
     imageUrl,
     size,
