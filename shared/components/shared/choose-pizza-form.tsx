@@ -1,15 +1,24 @@
+'use client';
+
 import { cn } from '@/shared/lib/utils';
-import React from 'react';
+import React, { useState } from 'react';
 import { PizzaImage } from './pizza-image';
 import { Button } from '../ui';
 import { Title } from './title';
 import { GroupVariants } from './group-variants';
-import { pizzaTypes } from '@/shared/constants/pizza';
+import {
+    PizzaSize,
+    pizzaSizes,
+    PizzaType,
+    pizzaTypes,
+} from '@/shared/constants/pizza';
+import { Ingredient } from '@prisma/client';
+import { IngredientItem } from './ingredient-item';
 
 interface ChoosePizzaFormPropsI {
     imageUrl: string;
     name: string;
-    ingredients: any[];
+    ingredients: Ingredient[];
     items?: any[];
     onClickAdd?: VoidFunction;
     className?: string;
@@ -26,11 +35,13 @@ export const ChoosePizzaForm: React.FC<ChoosePizzaFormPropsI> = ({
     items,
     onClickAdd,
 }) => {
+    const [size, setSize] = useState<PizzaSize>(20);
+    const [type, setType] = useState<PizzaType>(1);
     return (
         <div className={cn(className, 'flex flex-1')}>
             <PizzaImage
                 imageUrl={imageUrl}
-                size={30}
+                size={size}
             />
             <div className="w-[490px] bg-[#f7f6f5] p-7">
                 <Title
@@ -40,11 +51,28 @@ export const ChoosePizzaForm: React.FC<ChoosePizzaFormPropsI> = ({
                 />
                 <p className="text-gray-400">textDetaills</p>
                 <div className="flex flex-col gap-4 mt-5">
-                    <GroupVariants items={pizzaTypes} />
+                    <GroupVariants
+                        items={pizzaSizes}
+                        value={String(size)}
+                        onClick={(value) => setSize(Number(value) as PizzaSize)}
+                    />
+                    <GroupVariants
+                        items={pizzaTypes}
+                        value={String(type)}
+                        onClick={(value) => setType(Number(value) as PizzaType)}
+                    />
                 </div>
                 <div className="bg-gray-50 p-5 rounded-md h-[420px] overflow-auto scrollbar mt-5">
                     <div className="grid grid-cols-3 gap-3">
-                        ingredients item
+                        {ingredients.map((ingredient) => (
+                            <IngredientItem
+                                key={ingredient.id}
+                                imageUrl={ingredient.imageUrl}
+                                name={ingredient.name}
+                                price={ingredient.price}
+                                onClick={onClickAdd}
+                            />
+                        ))}
                     </div>
                 </div>
                 <Button className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10">

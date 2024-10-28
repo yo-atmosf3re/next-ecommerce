@@ -15,4 +15,5 @@ export { PizzaImage } from '@/shared/components/shared/pizza-image';
 export { GroupVariants } from '@/shared/components/shared/group-variants';
 export { ChoosePizzaForm } from '@/shared/components/shared/choose-pizza-form';
 export { ChooseProductForm } from '@/shared/components/shared/choose-product-form';
+export { IngredientItem } from '@/shared/components/shared/ingredient-item';
 export * from './modals';
