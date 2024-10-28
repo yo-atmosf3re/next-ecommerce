@@ -7,20 +7,22 @@ import { Button } from '../ui';
 import { Title } from './title';
 import { GroupVariants } from './group-variants';
 import {
+    mapPizzaType,
     PizzaSize,
     pizzaSizes,
     PizzaType,
     pizzaTypes,
 } from '@/shared/constants/pizza';
-import { Ingredient } from '@prisma/client';
+import { Ingredient, ProductItem } from '@prisma/client';
 import { IngredientItem } from './ingredient-item';
+import { useSet } from 'react-use';
 
 interface ChoosePizzaFormPropsI {
     imageUrl: string;
     name: string;
     ingredients: Ingredient[];
-    items?: any[];
-    onClickAdd?: VoidFunction;
+    items: ProductItem[];
+    onClickAddCart?: VoidFunction;
     className?: string;
 }
 
@@ -33,10 +35,66 @@ export const ChoosePizzaForm: React.FC<ChoosePizzaFormPropsI> = ({
     ingredients,
     name,
     items,
-    onClickAdd,
+    onClickAddCart,
 }) => {
     const [size, setSize] = useState<PizzaSize>(20);
     const [type, setType] = useState<PizzaType>(1);
+
+    const [selectedIngredients, { toggle: addIngredient }] = useSet(
+        new Set<number>([]),
+    );
+
+    // ? Для выбранного размера и типа находим цену;
+    const pizzaPrice =
+        items.find((item) => item.pizzaType === type && item.size === size)
+            ?.price || 0;
+
+    // ? Для выбранной пиццы находим выбранные ингредиенты и суммируем их между собой;
+    const totalIngredientsPrice = ingredients
+        .filter((ingredient) => selectedIngredients.has(ingredient.id))
+        .reduce((acc, ingredient) => acc + ingredient.price, 0);
+
+    // ? Финальная цена - цена пиццы + цена выбранных ингредиентов;
+    const totalPrice = pizzaPrice + totalIngredientsPrice;
+
+    const textDetails = `${size} см, ${mapPizzaType[type]} пицца, ингредиенты (${selectedIngredients.size})`;
+
+    const handleClickAdd = () => {
+        onClickAddCart?.();
+        console.log({
+            size,
+            type,
+            ingredient: selectedIngredients,
+        });
+    };
+
+    // ? Фильтрация пицц по типу - для типа теста находит доступные пиццы по размеру;
+    const availablePizzas = items.filter((item) => item.pizzaType === type);
+    // ? Формирование списка доступных пицц для выбора, где disabled будет true в случае, если не нашлось ни одного доступого размера для выбранного типа пиццы;
+    const availabelPizzaSizes = pizzaSizes.map((item) => ({
+        name: item.name,
+        value: item.value,
+        disabled: !availablePizzas.some(
+            (pizza) => Number(pizza.size) === Number(item.value),
+        ),
+    }));
+
+    React.useEffect(() => {
+        // ? Выбранный и !disabled размер;
+        const isAvailableSize = availabelPizzaSizes?.find(
+            (item) => Number(item.value) === size && !item.disabled,
+        );
+        // ? Первый доступный размер;
+        const avialbleSize = availabelPizzaSizes?.find(
+            (item) => !item.disabled,
+        );
+
+        // ? Если выбранный текущий размер стал disabled, то устанавливаем выбранным первый найденный доступный размер;
+        if (!isAvailableSize && avialbleSize) {
+            setSize(Number(avialbleSize.value) as PizzaSize);
+        }
+    }, [type]);
+
     return (
         <div className={cn(className, 'flex flex-1')}>
             <PizzaImage
@@ -49,10 +107,10 @@ export const ChoosePizzaForm: React.FC<ChoosePizzaFormPropsI> = ({
                     size="md"
                     className="font-extrabold mb-1"
                 />
-                <p className="text-gray-400">textDetaills</p>
+                <p className="text-gray-400">{textDetails}</p>
                 <div className="flex flex-col gap-4 mt-5">
                     <GroupVariants
-                        items={pizzaSizes}
+                        items={availabelPizzaSizes}
                         value={String(size)}
                         onClick={(value) => setSize(Number(value) as PizzaSize)}
                     />
@@ -70,13 +128,17 @@ export const ChoosePizzaForm: React.FC<ChoosePizzaFormPropsI> = ({
                                 imageUrl={ingredient.imageUrl}
                                 name={ingredient.name}
                                 price={ingredient.price}
-                                onClick={onClickAdd}
+                                onClick={() => addIngredient(ingredient.id)}
+                                active={selectedIngredients.has(ingredient.id)}
                             />
                         ))}
                     </div>
                 </div>
-                <Button className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10">
-                    Добавить в корзину за totalPrice ₽
+                <Button
+                    onClick={handleClickAdd}
+                    className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10"
+                >
+                    Добавить в корзину за {totalPrice} ₽
                 </Button>
             </div>
         </div>
