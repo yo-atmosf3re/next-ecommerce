@@ -1,3 +1,5 @@
+'use client';
+
 import { ProductItem } from '@prisma/client';
 import { PizzaSize, PizzaType } from '../constants/pizza';
 import { VariantI } from '../components/shared/group-variants';
