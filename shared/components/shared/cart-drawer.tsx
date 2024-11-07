@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {
     Button,
@@ -11,6 +13,7 @@ import {
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { CartDrawerItem } from './cart-drawer-item';
+import { getCartItemDetails } from '@/shared/lib';
 
 interface CartDrawerPropsI {
     className?: string;
@@ -32,7 +35,23 @@ export const CartDrawer: React.FC<
                     </SheetTitle>
                 </SheetHeader>
                 <div className="-mx-6 mt-5 overflow-auto flex-1">
-                    
+                    <div className="mb-2">
+                        <CartDrawerItem
+                            id={1}
+                            imageUrl={
+                                'https://media.dodostatic.net/image/r:292x292/11EE7D612FC7B7FCA5BE822752BEE1E5.avif'
+                            }
+                            details={getCartItemDetails(2, 30, [
+                                // @ts-ignore
+                                { name: 'Цыплёнок' },
+                                // @ts-ignore
+                                { name: 'Сыр' },
+                            ])}
+                            name={'Пепперони фреш'}
+                            price={500}
+                            quantity={1}
+                        />
+                    </div>
                 </div>
                 <SheetFooter className="-mx-6 bg-white p-8">
                     <div className="w-full">
